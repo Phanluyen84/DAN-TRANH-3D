@@ -1,0 +1,259 @@
+<!doctype html>\n<html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Khám phá cấu tạo đàn tranh</title>
+<script src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js">
+document.getElementById("exportBtn").addEventListener("click", ()=>{
+  if(!saved.some(Boolean)){
+    setStatus("Cô chưa đặt chú thích nào để xuất bản.");
+    return;
+  }
+
+  const current = JSON.stringify(saved);
+  const source = document.documentElement.outerHTML;
+  const baked = source.replace(
+    'const EMBEDDED_SAVED = [];',
+    'const EMBEDDED_SAVED = ' + current + ';'
+  );
+
+  const blob = new Blob(["<!doctype html>\n"+baked], {type:"text/html;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "dan_tranh_3D_DA_DAT_CHU_THICH.html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+
+  setStatus("Đã xuất bản! Hãy giữ file dan_tranh_3D_DA_DAT_CHU_THICH.html để dùng về sau.");
+});
+</script>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f7f4ef;color:#2b2b2b}
+  header{padding:18px 22px;background:linear-gradient(135deg,#fff8e9,#fff);border-bottom:1px solid #eadfce}
+  h1{margin:0 0 5px;font-size:28px;color:#9b3d20}
+  .sub{font-size:15px;color:#6b625a}
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;padding:14px;max-width:1500px;margin:auto}
+  .viewer{background:#333;border-radius:16px;overflow:hidden;min-height:650px;box-shadow:0 5px 20px #0002}
+  iframe{width:100%;height:650px;border:0;display:block}
+  .panel{background:white;border-radius:16px;padding:16px;box-shadow:0 5px 20px #0001}
+  .hint{background:#fff7df;border:1px solid #f1d995;padding:12px;border-radius:12px;line-height:1.45;font-size:14px;margin-bottom:12px}
+  .status{padding:10px 12px;border-radius:10px;background:#f2f2f2;margin-bottom:12px;font-size:14px}
+  .part{width:100%;border:0;border-radius:11px;padding:12px;text-align:left;margin:7px 0;cursor:pointer;background:#f5f6f8;font-size:15px}
+  .part:hover{background:#eee}
+  .part.active{outline:3px solid #ffbf55;background:#fff4d8}
+  .num{display:inline-flex;width:30px;height:30px;border-radius:50%;align-items:center;justify-content:center;color:white;font-weight:bold;margin-right:9px}
+  .n1{background:#f08a24}.n2{background:#39a852}.n3{background:#2677d9}.n4{background:#e64a62}.n5{background:#7b4bc2}
+  .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .action{flex:1;min-width:90px;border:0;border-radius:10px;padding:10px;cursor:pointer;font-weight:600}
+  .save{background:#9b3d20;color:white}.export{background:#2f7d5a;color:white}.clear{background:#eee;color:#333}
+  .small{font-size:12px;color:#777;line-height:1.45;margin-top:10px}
+  @media(max-width:900px){
+    .layout{grid-template-columns:1fr}
+    .viewer,iframe{min-height:55vh;height:55vh}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🎵 Khám phá cấu tạo đàn tranh</h1>
+  <div class="sub">Mô hình 3D tương tác – tên gọi theo SGK</div>
+</header>
+
+<div class="layout">
+  <section class="viewer">
+    <iframe id="api-frame" src="https://sketchfab.com/models/8e21efd23ef84a32b8e7058cfb222941/embed?api_version=1.12.1&amp;api_id=1_api-frame&amp;autostart=1" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking="" execution-while-in-viewport="" allowfullscreen=""></iframe>
+  </section>
+
+  <aside class="panel">
+    <div class="hint">
+      <b>Cách làm lần đầu:</b><br>
+      1. Chọn một bộ phận ở bên dưới.<br>
+      2. Xoay/phóng to cây đàn nếu cần.<br>
+      3. Bấm đúng vào bộ phận đó trên mô hình.<br>
+      4. Điểm chú thích sẽ được tạo ngay trên đàn.
+    </div>
+
+    <div id="status" class="status">Đã lưu. Để chắc chắn dùng được cả khi đổi tên/copy file, hãy bấm «Xuất bản đã đặt».</div>
+
+    <button class="part" data-i="0"><span class="num n1">1</span><b>Ngựa đàn</b></button>
+    <button class="part" data-i="1"><span class="num n2">2</span><b>Khóa lên dây đàn</b></button>
+    <button class="part" data-i="2"><span class="num n3">3</span><b>Dây đàn</b></button>
+    <button class="part" data-i="3"><span class="num n4">4</span><b>Con chắn mắc dây đàn</b></button>
+    <button class="part" data-i="4"><span class="num n5">5</span><b>Móng gảy</b></button>
+
+    <div class="actions">
+      <button class="action save" id="saveBtn">💾 Lưu</button>
+      <button class="action export" id="exportBtn">📦 Xuất bản đã đặt</button>
+      <button class="action clear" id="clearBtn">↺ Làm lại</button>
+      <button class="action export" id="exportBtn">📦 Xuất bản đã đặt</button>
+    </div>
+
+    <div class="small">
+      Sau khi đặt đủ 5 điểm, bấm <b>Lưu</b>. Nếu cô muốn mở lại chắc chắn vẫn còn, bấm <b>Xuất bản đã đặt</b> để tải một file HTML mới; file mới đó đã chứa sẵn 5 vị trí và không phụ thuộc bộ nhớ trình duyệt.
+      Cần có Internet vì mô hình được hiển thị trực tiếp từ Sketchfab.
+    </div>
+  </aside>
+</div>
+
+<script>
+const UID = "8e21efd23ef84a32b8e7058cfb222941";
+const STORAGE = "dantranh_annotations_v2";
+const INITIAL_SAVED = [{"position":{"0":-0.027780991746359424,"1":-0.01437601716367328,"2":0.004811586272818336},"eye":[-0.013830946056153998,-0.10835048668630679,-0.007218831544715269],"target":[-0.0062722722486915775,-0.02203922940618039,-0.0020843249944888405]},{"position":{"0":0.019512630971536476,"1":-0.013445199039241509,"2":0.004338417142369218},"eye":[-0.013830946056153998,-0.10835048668630679,-0.007218831544715269],"target":[-0.0062722722486915775,-0.02203922940618039,-0.0020843249944888405]},{"position":{"0":-0.048955292367025574,"1":-0.010489319798535533,"2":0.0003368723608197892},"eye":[-0.013830946056153998,-0.10835048668630679,-0.007218831544715269],"target":[-0.0062722722486915775,-0.02203922940618039,-0.0020843249944888405]},{"position":{"0":-0.06253969693640822,"1":-0.010657165951770978,"2":-0.007021393514609403},"eye":[-0.013830946056153998,-0.10835048668630679,-0.007218831544715269],"target":[-0.0062722722486915775,-0.02203922940618039,-0.0020843249944888405]}];
+
+const parts = [
+  {title:"Ngựa đàn", text:"Nằm ở giữa các dây để di chuyển điều chỉnh âm thanh."},
+  {title:"Khóa lên dây đàn", text:"Dùng để điều chỉnh độ căng của dây đàn."},
+  {title:"Dây đàn", text:"Đàn có 16 dây."},
+  {title:"Con chắn mắc dây đàn", text:"Nằm ở đầu lớn của đàn, dùng để mắc dây đàn."},
+  {title:"Móng gảy", text:"Người chơi thường đeo 3 móng vào ngón cái, ngón trỏ và ngón giữa để gảy vào dây đàn."}
+];
+
+const iframe = document.getElementById("api-frame");
+const statusEl = document.getElementById("status");
+const buttons = [...document.querySelectorAll(".part")];
+
+iframe.src =
+  "https://sketchfab.com/models/" + UID +
+  "/embed?autostart=1&ui_controls=1&ui_infos=0&ui_watermark=0&ui_annotations=1";
+
+let api = null;
+let active = null;
+let saved = INITIAL_SAVED.length ? INITIAL_SAVED : (() => {
+  try { return JSON.parse(localStorage.getItem(STORAGE) || "[]"); }
+  catch(e) { return []; }
+})();
+
+function setStatus(s){ statusEl.textContent = s; }
+
+function initAnnotations(){
+  if(!api) return;
+  api.removeAllAnnotations(()=>{
+    saved.forEach((a, i)=>{
+      if(a && a.position && a.eye && a.target){
+        api.createAnnotationFromWorldPosition(
+          a.position, a.eye, a.target,
+          parts[i].title, parts[i].text,
+          ()=>{}
+        );
+      }
+    });
+    const count = saved.filter(Boolean).length;
+    setStatus(count ? `Đã nạp ${count}/5 chú thích đã lưu.` : "Mô hình đã sẵn sàng. Chọn một bộ phận để bắt đầu.");
+  });
+}
+
+const client = new Sketchfab("1.12.1", iframe);
+client.init(UID, {
+  autostart: 1,
+  success: function(instance){
+    api = instance;
+    api.start(function(){
+      api.addEventListener("viewerready", function(){
+        setStatus("Mô hình 3D đã sẵn sàng. Chọn bộ phận rồi bấm lên đàn.");
+        initAnnotations();
+
+        api.addEventListener("click", function(info){
+          if(active === null) return;
+          if(!info || !info.position3D) return;
+
+          api.getCameraLookAt(function(err, cam){
+            if(err) return;
+            const a = {
+              position: info.position3D,
+              eye: cam.position,
+              target: cam.target
+            };
+            saved[active] = a;
+
+            api.createAnnotationFromWorldPosition(
+              a.position, a.eye, a.target,
+              parts[active].title, parts[active].text,
+              function(err, index){
+                if(err){
+                  setStatus("Không tạo được điểm. Hãy thử bấm đúng lên bề mặt đàn.");
+                } else {
+                  setStatus(`Đã đặt ${active+1}. ${parts[active].title}. Chọn bộ phận khác.`);
+                  buttons.forEach(b=>b.classList.remove("active"));
+                  active = null;
+                }
+              }
+            );
+          });
+        }, {pick:"slow"});
+      });
+    });
+  },
+  error: function(){ setStatus("Không tải được mô hình. Kiểm tra Internet rồi mở lại trang."); }
+});
+
+buttons.forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    active = Number(btn.dataset.i);
+    buttons.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    setStatus(`Đang chờ cô đặt điểm cho: ${parts[active].title}. Hãy bấm đúng vị trí trên cây đàn.`);
+  });
+});
+
+document.getElementById("saveBtn").addEventListener("click", ()=>{
+  try {
+    localStorage.setItem(STORAGE, JSON.stringify(saved));
+    setStatus("Đã lưu. Để chắc chắn dùng được cả khi đổi tên/copy file, hãy bấm «Xuất bản đã đặt».");
+  } catch(e) {
+    setStatus("Trình duyệt không cho lưu bộ nhớ. Hãy dùng «Xuất bản đã đặt».");
+  }
+});
+
+document.getElementById("exportBtn").addEventListener("click", ()=>{
+  const embedded = JSON.stringify(saved).replace(/</g,"\\u003c");
+  let out = document.documentElement.outerHTML;
+  out = out.replace(/const INITIAL_SAVED = \[\];[^\n]*/,
+                    "const INITIAL_SAVED = " + embedded + ";");
+  const blob = new Blob(["<!doctype html>\\n"+out], {type:"text/html;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "dan_tranh_3D_DA_DAT_CHU_THICH.html";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  setStatus("Đã tạo «dan_tranh_3D_DA_DAT_CHU_THICH.html». Mở file này lần sau là các điểm đã có sẵn.");
+});
+
+document.getElementById("clearBtn").addEventListener("click", ()=>{
+  saved = [];
+  try { localStorage.removeItem(STORAGE); } catch(e) {}
+  if(api) api.removeAllAnnotations(()=>setStatus("Đã xóa. Cô có thể đặt lại 5 chú thích từ đầu."));
+});
+
+document.getElementById("exportBtn").addEventListener("click", ()=>{
+  if(!saved.some(Boolean)){
+    setStatus("Cô chưa đặt chú thích nào để xuất bản.");
+    return;
+  }
+
+  const current = JSON.stringify(saved);
+  const source = document.documentElement.outerHTML;
+  const baked = source.replace(
+    'const EMBEDDED_SAVED = [];',
+    'const EMBEDDED_SAVED = ' + current + ';'
+  );
+
+  const blob = new Blob(["<!doctype html>\n"+baked], {type:"text/html;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "dan_tranh_3D_DA_DAT_CHU_THICH.html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+
+  setStatus("Đã xuất bản! Hãy giữ file dan_tranh_3D_DA_DAT_CHU_THICH.html để dùng về sau.");
+});
+</script>
+
+
+</body></html>
